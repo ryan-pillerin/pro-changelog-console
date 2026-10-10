@@ -1,31 +1,56 @@
-# ProChangeLog — Backend
+# ProChangeLog Console
 
-ProChangeLog is a project changelog and context platform designed to preserve project history and make relevant project information easier to retrieve.
+ProChangeLog is a project changelog and context platform designed to make project history easier to record, understand, and retrieve.
 
-The backend implements the application's business capabilities, enforces business rules, manages persistent data, and exposes API contracts to the frontend and other authorized consumers.
-
-## Objectives
-
-* Implement ProChangeLog's business capabilities with clear responsibility boundaries.
-* Preserve semantic ownership across capabilities.
-* Provide explicit interfaces for cross-capability communication.
-* Keep business rules independent of framework-specific persistence details where appropriate.
-* Support the evolution of the system without unnecessary implementation coupling.
+The backend implements the business capabilities of ProChangeLog using Laravel, exposing API contracts to the frontend and other authorized consumers.
 
 ## Technology Stack
 
-* **PHP 8.4+** — application development
-* **Laravel 13** — application framework
-* **MySQL** — relational database
-* **Composer** — PHP dependency management
-* **Nginx** — web server and reverse proxy in the deployment environment
-* **PHPUnit or Pest** — testing, according to the repository configuration
+* PHP 8.4+
+* Laravel 13
+* MySQL
+* Composer
+* Nginx
+* Laravel-supported testing tools configured by the project
+
+## Development Instructions
+
+### Laravel as the Implementation Framework
+
+All backend development must follow the applicable Laravel documentation, conventions, instructions, and established project configuration.
+
+Before implementing a feature, developers and AI coding assistants must:
+
+* Follow Laravel's recommended practices for the relevant functionality.
+* Use Laravel's existing capabilities where appropriate instead of reinventing framework functionality.
+* Respect the project's installed Laravel version and dependencies.
+* Follow the established project structure and implementation conventions.
+* Avoid introducing third-party packages, architectural patterns, or abstractions without sufficient justification.
+* Preserve existing functionality and established project conventions when extending the system.
+
+Laravel conventions govern framework implementation. Business ownership and architectural boundaries are determined by the system's business semantics and the Singularity Principle.
+
+### Architecture and Business Semantics
+
+The backend must follow the Singularity Principle to determine semantic identity, ownership, responsibility, and relationships between business capabilities.
+
+The following rules apply:
+
+* **Requires ≠ Owns.** A capability's dependency on another capability does not transfer ownership.
+* Preserve semantic identity and responsibility across capability boundaries.
+* Use explicit cross-capability contracts.
+* Prevent unauthorized access to another capability's internal implementation.
+* Keep implementation dependencies as limited as reasonably possible without eliminating necessary semantic relationships.
+* Avoid unnecessary abstractions, duplicated responsibilities, and architectural fragmentation.
+* Reorganize the implementation when necessary to maintain coherence with the business semantics.
+
+Do not introduce a conventional architecture or design pattern solely because it is commonly used in Laravel projects. Determine whether the structure is appropriate for the actual business responsibility and established architecture.
 
 ## Business Capabilities
 
 ### Tenant Management
 
-Manages tenant-related responsibilities, including invitations and tenant membership.
+Manages tenant-related responsibilities, invitations, and tenant membership.
 
 ### Client Management
 
@@ -33,7 +58,7 @@ Manages client information within the appropriate tenant boundary.
 
 ### IAM
 
-Owns account identity and account lifecycle responsibilities, including authentication-related functionality and applicable access controls.
+Owns account identity, account lifecycle, authentication, credentials, and applicable access-control responsibilities.
 
 ### User Management
 
@@ -41,53 +66,13 @@ Owns self-registration and user profile management. Account creation required by
 
 ### Project Management
 
-Manages projects, their business metadata, and applicable project membership and visibility rules.
+Manages projects, project information, and applicable project membership and visibility rules.
 
 ### Changelog Management
 
-Manages changelog entries associated with projects, including the business rules governing their creation, maintenance, and presentation.
+Manages changelog entries associated with projects and their applicable business rules.
 
-The capabilities have explicit relationships, but a dependency on another capability does not transfer ownership of its responsibilities.
-
-## Architectural Principles
-
-### Semantic Ownership
-
-Every business capability must have a clear responsibility and ownership boundary.
-
-A capability owns the business meaning and rules assigned to it. Other capabilities may require its functionality without owning or duplicating its responsibilities.
-
-**Requires does not imply owns.**
-
-### Cross-Capability Communication
-
-Cross-capability interactions must use explicit contracts and appropriate boundary mechanisms.
-
-A capability must not bypass another capability's boundary by directly accessing its internal repositories, persistence models, or implementation details.
-
-### Separation of Business and Infrastructure
-
-Framework-specific concerns, database operations, and external integrations should remain separated from business responsibilities where required by the architecture.
-
-The implementation must preserve the intended business meaning rather than allow persistence structures or framework conventions to dictate it.
-
-### Meaningful Naming
-
-Names must reflect semantic identity, responsibility, and purpose.
-
-Avoid generic technical names that obscure meaning. Every independently named component must have a defensible reason to exist.
-
-### Architectural Coherence
-
-The system should contain the structures necessary to implement its business requirements without introducing unjustified abstractions, duplicated responsibilities, or unnecessary layers.
-
-Architectural decisions should be evaluated in relation to the complete system, not solely by local implementation convenience.
-
-### Architectural Evolution
-
-The implementation should permit capabilities and relationships to evolve when business semantics change.
-
-Existing functionality should be reused when its identity, behavior, contracts, and invariants remain appropriate. Incompatible behavior or changed business rules must be addressed explicitly.
+Each capability retains its semantic ownership regardless of the Laravel implementation used.
 
 ## Development Setup
 
@@ -96,99 +81,91 @@ Existing functionality should be reused when its identity, behavior, contracts, 
 * PHP version compatible with Laravel 13
 * Composer
 * MySQL
-* Required PHP extensions for the project
-* Node.js and npm if frontend asset tooling is used by the backend repository
+* Required PHP extensions
+* Node.js and npm if required by the repository's asset tooling
 
 ### Installation
-
-Clone the backend repository:
 
 ```bash
 git clone <backend-repository-url>
 cd <backend-project-directory>
+
 composer install
-```
 
-Create the local environment configuration:
-
-```bash
 cp .env.example .env
-```
 
-Configure the database connection and other required environment variables in `.env`.
-
-Generate the application key if the project requires Laravel's standard application key:
-
-```bash
 php artisan key:generate
 ```
 
-Run the database migrations:
+Configure the database and other required environment variables in `.env`.
+
+Run database migrations:
 
 ```bash
 php artisan migrate
 ```
 
-Follow the project's documented setup procedure if it requires additional initialization steps.
-
-### Start the Development Server
+Start the development server:
 
 ```bash
 php artisan serve
 ```
 
-This starts Laravel's development server. Production deployments should use the configured application server and Nginx setup.
+### Testing
 
-### Run Tests
+Run the project's configured test suite:
 
 ```bash
 php artisan test
 ```
 
-Tests should cover meaningful business behavior, capability boundaries, API workflows, and important failure conditions.
+Tests should validate meaningful business rules, API workflows, capability boundaries, and relevant failure conditions.
 
-## Configuration and Security
+## API Development
 
-* Keep environment-specific secrets out of source control.
-* Validate incoming requests at the appropriate application boundary.
-* Enforce authentication and authorization through the designated capabilities.
-* Do not expose internal persistence models as public API contracts by default.
+* Follow Laravel's applicable routing, request validation, middleware, authentication, and response conventions.
+* Maintain explicit API contracts.
+* Do not expose internal persistence structures as public API contracts without justification.
+* Enforce authorization at the appropriate application boundary.
 * Handle cross-capability failures and consistency requirements explicitly.
-* Avoid broad exception handling that obscures unexpected failures.
-* Configure production database access, application keys, logging, and server permissions appropriately.
+* Keep API behavior aligned with the documented business rules.
 
-## API Responsibilities
+## Security and Configuration
 
-The backend exposes the operations required by the frontend through defined API contracts.
-
-API responses should represent the intended public data structure rather than expose internal database structures accidentally.
-
-API contracts should be versioned or evolved deliberately when changes would affect existing consumers.
+* Keep secrets and environment-specific credentials out of source control.
+* Follow Laravel's security guidance for authentication, authorization, validation, and database access.
+* Do not expose private credentials through API responses or frontend configuration.
+* Configure production permissions, logging, database access, and environment settings appropriately.
 
 ## Testing Guidelines
 
-Testing should focus on behavior and architectural responsibilities:
+Use Laravel's testing facilities where appropriate.
 
-* Unit tests for meaningful business rules.
-* API feature tests for important application workflows.
-* Boundary tests for cross-capability interactions.
-* Regression tests for behavior affected by architectural changes.
-* Failure-path tests for operations that span multiple capabilities.
+Prioritize tests for:
 
-Test volume should be driven by meaningful behavior and risk, not by a target number of generated tests.
+* Business rules and capability behavior.
+* API workflows.
+* Authentication and authorization.
+* Cross-capability contracts.
+* Important failure conditions.
+* Regression risks introduced by implementation changes.
+
+Test coverage should reflect actual behavior and risk rather than an arbitrary number of generated tests.
 
 ## Deployment
 
-The production environment is expected to use PHP and Laravel with MySQL and Nginx.
+The production environment uses Laravel with PHP, MySQL, and Nginx.
 
-Deployment documentation should define the actual server configuration, environment variables, database migration procedure, permissions, logging, and operational requirements for the target environment.
+Deployment procedures must document the actual environment configuration, database migration process, permissions, logging, and operational requirements.
 
-## Future Direction
+## Future Development
 
-The backend may later support additional project context capabilities, such as project overviews, documentation references, architecture information, deployment resources, and external integrations.
+Future capabilities may extend ProChangeLog with project context, documentation references, architecture information, deployment resources, and external integrations.
 
-Future capabilities should be introduced according to demonstrated business needs while preserving existing capability ownership and architectural boundaries.
+Implement these capabilities according to their business semantics and documented architectural boundaries, following Laravel's applicable instructions for the implementation.
 
-## Related Documentation
+## Documentation
 
-Refer to the project's architecture documents, business capability definitions, API contracts, and architecture decision records for detailed implementation requirements.
+Refer to the project's business capability documents, architecture documentation, API contracts, and development instructions for detailed requirements.
+
+When instructions conflict, identify the conflict explicitly rather than silently introducing an architectural exception or changing established business ownership.
