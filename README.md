@@ -87,8 +87,8 @@ Each capability retains its semantic ownership regardless of the Laravel impleme
 ### Installation
 
 ```bash
-git clone <backend-repository-url>
-cd <backend-project-directory>
+git clone git@github.com:ryan-pillerin/pro-changelog-console.git
+cd pro-changelog-console
 
 composer install
 
