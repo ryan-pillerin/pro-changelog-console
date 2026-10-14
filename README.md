@@ -1,58 +1,171 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# ProChangeLog Console
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+ProChangeLog is a project changelog and context platform designed to make project history easier to record, understand, and retrieve.
 
-## About Laravel
+The backend implements the business capabilities of ProChangeLog using Laravel, exposing API contracts to the frontend and other authorized consumers.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Technology Stack
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+* PHP 8.4+
+* Laravel 13
+* MySQL
+* Composer
+* Nginx
+* Laravel-supported testing tools configured by the project
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Development Instructions
 
-## Learning Laravel
+### Laravel as the Implementation Framework
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+All backend development must follow the applicable Laravel documentation, conventions, instructions, and established project configuration.
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Before implementing a feature, developers and AI coding assistants must:
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+* Follow Laravel's recommended practices for the relevant functionality.
+* Use Laravel's existing capabilities where appropriate instead of reinventing framework functionality.
+* Respect the project's installed Laravel version and dependencies.
+* Follow the established project structure and implementation conventions.
+* Avoid introducing third-party packages, architectural patterns, or abstractions without sufficient justification.
+* Preserve existing functionality and established project conventions when extending the system.
 
-## Agentic Development
+Laravel conventions govern framework implementation. Business ownership and architectural boundaries are determined by the system's business semantics and the Singularity Principle.
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+### Architecture and Business Semantics
+
+The backend must follow the Singularity Principle to determine semantic identity, ownership, responsibility, and relationships between business capabilities.
+
+The following rules apply:
+
+* **Requires ≠ Owns.** A capability's dependency on another capability does not transfer ownership.
+* Preserve semantic identity and responsibility across capability boundaries.
+* Use explicit cross-capability contracts.
+* Prevent unauthorized access to another capability's internal implementation.
+* Keep implementation dependencies as limited as reasonably possible without eliminating necessary semantic relationships.
+* Avoid unnecessary abstractions, duplicated responsibilities, and architectural fragmentation.
+* Reorganize the implementation when necessary to maintain coherence with the business semantics.
+
+Do not introduce a conventional architecture or design pattern solely because it is commonly used in Laravel projects. Determine whether the structure is appropriate for the actual business responsibility and established architecture.
+
+## Business Capabilities
+
+### Tenant Management
+
+Manages tenant-related responsibilities, invitations, and tenant membership.
+
+### Client Management
+
+Manages client information within the appropriate tenant boundary.
+
+### IAM
+
+Owns account identity, account lifecycle, authentication, credentials, and applicable access-control responsibilities.
+
+### User Management
+
+Owns self-registration and user profile management. Account creation required by registration is performed through IAM's defined capability.
+
+### Project Management
+
+Manages projects, project information, and applicable project membership and visibility rules.
+
+### Changelog Management
+
+Manages changelog entries associated with projects and their applicable business rules.
+
+Each capability retains its semantic ownership regardless of the Laravel implementation used.
+
+## Development Setup
+
+### Requirements
+
+* PHP version compatible with Laravel 13
+* Composer
+* MySQL
+* Required PHP extensions
+* Node.js and npm if required by the repository's asset tooling
+
+### Installation
 
 ```bash
-composer require laravel/boost --dev
+git clone git@github.com:ryan-pillerin/pro-changelog-console.git
+cd pro-changelog-console
 
-php artisan boost:install
+composer install
+
+cp .env.example .env
+
+php artisan key:generate
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Configure the database and other required environment variables in `.env`.
 
-## Contributing
+Run database migrations:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+php artisan migrate
+```
 
-## Code of Conduct
+Start the development server:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+php artisan serve
+```
 
-## Security Vulnerabilities
+### Testing
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Run the project's configured test suite:
 
-## License
+```bash
+php artisan test
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Tests should validate meaningful business rules, API workflows, capability boundaries, and relevant failure conditions.
+
+## API Development
+
+* Follow Laravel's applicable routing, request validation, middleware, authentication, and response conventions.
+* Maintain explicit API contracts.
+* Do not expose internal persistence structures as public API contracts without justification.
+* Enforce authorization at the appropriate application boundary.
+* Handle cross-capability failures and consistency requirements explicitly.
+* Keep API behavior aligned with the documented business rules.
+
+## Security and Configuration
+
+* Keep secrets and environment-specific credentials out of source control.
+* Follow Laravel's security guidance for authentication, authorization, validation, and database access.
+* Do not expose private credentials through API responses or frontend configuration.
+* Configure production permissions, logging, database access, and environment settings appropriately.
+
+## Testing Guidelines
+
+Use Laravel's testing facilities where appropriate.
+
+Prioritize tests for:
+
+* Business rules and capability behavior.
+* API workflows.
+* Authentication and authorization.
+* Cross-capability contracts.
+* Important failure conditions.
+* Regression risks introduced by implementation changes.
+
+Test coverage should reflect actual behavior and risk rather than an arbitrary number of generated tests.
+
+## Deployment
+
+The production environment uses Laravel with PHP, MySQL, and Nginx.
+
+Deployment procedures must document the actual environment configuration, database migration process, permissions, logging, and operational requirements.
+
+## Future Development
+
+Future capabilities may extend ProChangeLog with project context, documentation references, architecture information, deployment resources, and external integrations.
+
+Implement these capabilities according to their business semantics and documented architectural boundaries, following Laravel's applicable instructions for the implementation.
+
+## Documentation
+
+Refer to the project's business capability documents, architecture documentation, API contracts, and development instructions for detailed requirements.
+
+When instructions conflict, identify the conflict explicitly rather than silently introducing an architectural exception or changing established business ownership.
